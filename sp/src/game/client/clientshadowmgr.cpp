@@ -1292,7 +1292,7 @@ bool CClientShadowMgr::Init()
 
 	//bool bTools = CommandLine()->CheckParm( "-tools" ) != NULL;
 	//m_nMaxDepthTextureShadows = bTools ? 4 : 1;	// Just one shadow depth texture in games, more in tools
-	m_nMaxDepthTextureShadows = 10;
+	m_nMaxDepthTextureShadows = 16;
 
 	bool bLowEnd = ( g_pMaterialSystemHardwareConfig->GetDXSupportLevel() < 80 );
 
