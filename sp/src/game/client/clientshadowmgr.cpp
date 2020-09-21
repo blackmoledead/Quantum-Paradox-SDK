@@ -1337,6 +1337,8 @@ void CClientShadowMgr::InitDepthTextureShadows()
 {
 	VPROF_BUDGET( "CClientShadowMgr::InitDepthTextureShadows", VPROF_BUDGETGROUP_SHADOW_DEPTH_TEXTURING );
 
+	m_nDepthTextureResolution = r_flashlightdepthres.GetInt();
+
 	if( !m_bDepthTextureActive )
 	{
 		m_bDepthTextureActive = true;
@@ -1353,7 +1355,7 @@ void CClientShadowMgr::InitDepthTextureShadows()
 		m_DummyColorTexture.InitRenderTargetTexture( r_flashlightdepthres.GetInt(), r_flashlightdepthres.GetInt(), RT_SIZE_OFFSCREEN, IMAGE_FORMAT_BGR565, MATERIAL_RT_DEPTH_SHARED, false, "_rt_ShadowDummy" );
 		m_DummyColorTexture.InitRenderTargetSurface( r_flashlightdepthres.GetInt(), r_flashlightdepthres.GetInt(), IMAGE_FORMAT_BGR565, true );
 #else
-		m_DummyColorTexture.InitRenderTarget( r_flashlightdepthres.GetInt(), r_flashlightdepthres.GetInt(), RT_SIZE_OFFSCREEN, nullFormat, MATERIAL_RT_DEPTH_NONE, false, "_rt_ShadowDummy" );
+		m_DummyColorTexture.InitRenderTarget( m_nDepthTextureResolution, m_nDepthTextureResolution, RT_SIZE_NO_CHANGE, nullFormat, MATERIAL_RT_DEPTH_NONE, false, "_rt_ShadowDummy" );
 #endif
 
 		// Create some number of depth-stencil textures
@@ -1373,15 +1375,10 @@ void CClientShadowMgr::InitDepthTextureShadows()
 			depthTex.InitRenderTargetTexture( m_nDepthTextureResolution, m_nDepthTextureResolution, RT_SIZE_OFFSCREEN, dstFormat, MATERIAL_RT_DEPTH_NONE, false, strRTName );
 			depthTex.InitRenderTargetSurface( 1, 1, dstFormat, false );
 #else
-			depthTex.InitRenderTarget( m_nDepthTextureResolution, m_nDepthTextureResolution, RT_SIZE_OFFSCREEN, dstFormat, MATERIAL_RT_DEPTH_NONE, false, strRTName );
+			depthTex.InitRenderTarget( m_nDepthTextureResolution, m_nDepthTextureResolution, RT_SIZE_NO_CHANGE, dstFormat, MATERIAL_RT_DEPTH_ONLY, false, strRTName );
 #endif
 
-			if ( i == 0 )
-			{
-				// Shadow may be resized during allocation (due to resolution constraints etc)
-				m_nDepthTextureResolution = depthTex->GetActualWidth();
-				r_flashlightdepthres.SetValue( m_nDepthTextureResolution );
-			}
+			Assert(depthTex->GetActualWidth() == m_nDepthTextureResolution);
 
 			m_DepthTextureCache.AddToTail( depthTex );
 			m_DepthTextureCacheLocks.AddToTail( bFalse );
