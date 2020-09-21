@@ -883,23 +883,21 @@ void CAmbientGeneric::SendSound( SoundFlags_t flags)
 	{
 		if ( flags == SND_STOP )
 		{
-			UTIL_EmitAmbientSound(pSoundSource->GetSoundSourceIndex(), pSoundSource->GetAbsOrigin(), szSoundFile, 
-						0, SNDLVL_NONE, flags, 0);
+			UTIL_EmitAmbientSound(pSoundSource->GetSoundSourceIndex(), pSoundSource->GetAbsOrigin(), szSoundFile, 0, SNDLVL_NONE, flags, 0);
+			m_fActive = false;
 		}
 		else
 		{
 			UTIL_EmitAmbientSound(pSoundSource->GetSoundSourceIndex(), pSoundSource->GetAbsOrigin(), szSoundFile, 
 				(m_dpv.vol * 0.01), m_iSoundLevel, flags, m_dpv.pitch);
+			if ( m_fLooping )
+				m_fActive = true;
 		}
 	}	
-	else
+	else if ( flags == SND_STOP && m_nSoundSourceEntIndex != -1 )
 	{
-		if ( ( flags == SND_STOP ) && 
-			( m_nSoundSourceEntIndex != -1 ) )
-		{
-			UTIL_EmitAmbientSound(m_nSoundSourceEntIndex, GetAbsOrigin(), szSoundFile, 
-					0, SNDLVL_NONE, flags, 0);
-		}
+		UTIL_EmitAmbientSound(m_nSoundSourceEntIndex, GetAbsOrigin(), szSoundFile, 0, SNDLVL_NONE, flags, 0);
+		m_fActive = false;
 	}
 }
 
