@@ -207,4 +207,22 @@ void CHud::DrawIconProgressBar( int x, int y, CHudTexture *icon, CHudTexture *ic
 	}
 }
 
+void CHud::DrawIconProgressBarExt( int x, int y, int w, int h, CHudTexture *icon, CHudTexture *icon2, float percentage, Color& clr, int type )
+{
+	if ( icon == NULL )
+		return;
+
+	percentage = min( 1.0f, percentage );
+	percentage = max( 0.0f, percentage );
+
+	int	height = icon->Height();
+	int	width  = icon->Width();
+
+	if ( type == HUDPB_VERTICAL )
+	{
+		int	barOfs = height * percentage;
+		icon2->DrawSelfCropped( x, y, 0, 0, width, barOfs, w, (h * percentage), clr );
+		icon->DrawSelfCropped( x, y + (h * percentage), 0, barOfs, width, height - barOfs, w, h - (h * percentage), clr );
+	}
+}
 
